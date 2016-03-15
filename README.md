@@ -1,2 +1,2 @@
-"Implementation of console calculator based on Reverse poland notation" 
+"Implementation of console calculator based on Poland reverse notation"
 "developing..." 
