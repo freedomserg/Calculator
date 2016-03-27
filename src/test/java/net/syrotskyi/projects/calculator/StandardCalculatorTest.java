@@ -129,7 +129,7 @@ public class StandardCalculatorTest {
     }
 
     @Test
-    public void checkAdditionWithIntegerDigits() {
+    public void checkAdditionWithIntegerDigits() throws CalculatorException {
         String input = "1 2 + 4 + 3 +";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -138,7 +138,7 @@ public class StandardCalculatorTest {
     }
 
     @Test
-    public void checkAdditionWithDoubleNumbers() {
+    public void checkAdditionWithDoubleNumbers() throws CalculatorException {
         String input = "11 22.0 + 444.5 + 33.75 +";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -148,7 +148,7 @@ public class StandardCalculatorTest {
 
 
     @Test
-    public void checkSubtractingWithIntegerDigits() {
+    public void checkSubtractingWithIntegerDigits() throws CalculatorException {
         String input = "1 7 8 - - 9 - 11 -";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -157,7 +157,7 @@ public class StandardCalculatorTest {
     }
 
     @Test
-    public void checkSubtractingWithDoubleNumbers() {
+    public void checkSubtractingWithDoubleNumbers() throws CalculatorException {
         String input = "75.2 33.7 12.555 - 12.95 - 14.75 - -";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -166,7 +166,7 @@ public class StandardCalculatorTest {
     }
 
     @Test
-    public void checkMultiplicationWithDoubleNumbers() {
+    public void checkMultiplicationWithDoubleNumbers() throws CalculatorException {
         String input = "5.5 2.0 * 4.55 * 1.5 *";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -176,7 +176,7 @@ public class StandardCalculatorTest {
     }
 
     @Test
-    public void checkDivisionWithDoubleNumbers() {
+    public void checkDivisionWithDoubleNumbers() throws CalculatorException {
         String input = "46.99 2.5 / 1.75 / 12.5 /";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
@@ -184,4 +184,5 @@ public class StandardCalculatorTest {
         double actual = new BigDecimal(result).setScale(3, RoundingMode.DOWN).doubleValue();
         Assert.assertThat(actual, is(0.859));
     }
+
 }

@@ -1,18 +1,16 @@
 package net.syrotskyi.projects.calculator;
 
-import net.syrotskyi.projects.calculator.exceptions.CalculatorException;
-import net.syrotskyi.projects.calculator.exceptions.InvalidSeparatorOrMismatchBracketsCalculatorException;
-import net.syrotskyi.projects.calculator.exceptions.EmptyBracketsCalculatorException;
-import net.syrotskyi.projects.calculator.exceptions.MismatchBracketsCalculatorException;
+import net.syrotskyi.projects.calculator.exceptions.*;
 
 import java.util.*;
 
 public class StandardCalculator {
-    private Map<String, Integer> executedOperations = new HashMap<>();
+    protected Map<String, Integer> executedOperations = new HashMap<>();
     Deque<String> stackOfOperators = new ArrayDeque<>();
+    Deque<Double> computingStack = new ArrayDeque<>();
     List<String> convertedExpression = new ArrayList<>();
 
-    {
+    public StandardCalculator() {
         executedOperations.put("(", 0);
         executedOperations.put(")", 0);
         executedOperations.put("+", 1);
@@ -21,126 +19,136 @@ public class StandardCalculator {
         executedOperations.put("/", 2);
     }
 
-    public Map<String, Integer> getExecutedOperations() {
-        return executedOperations;
+    public double evaluateExpression(String validatedString) throws CalculatorException {
+        return compute(convertToPostfixNotation(validatedString));
     }
 
-    public double evaluateExpression(String confirmedString) throws CalculatorException {
-        return compute(convertToPostfixNotation(confirmedString));
-    }
+    List<String> convertToPostfixNotation(String validatedString) throws CalculatorException {
+        String[] partsOfInfixNotation = validatedString.split(" ");
 
-    List<String> convertToPostfixNotation(String infixNotation) throws CalculatorException {
-        String[] unitsOfInfixNotation = infixNotation.split(" ");
+        for (String part : partsOfInfixNotation) {
 
-        for (String unit : unitsOfInfixNotation) {
+            if (!isOperator(part)) {
+                addNumberToConvertedExpression(part);
 
-            if (!isOperator(unit)) {
-                addNumberToConvertedExpression(unit);
             } else if (sizeOfStackOfOperators() > 0) {
 
-                if (isOpeningBrace(unit)) {
-                    stackOfOperators.push(unit);
-                } else if (")".equals(unit)) {
+                if (isOpeningBrace(part)) {
+                    stackOfOperators.push(part);
 
+                } else if (isClosingBrace(part)) {
                     if (isOpeningBrace(stackOfOperators.peek())) {
                         throw new EmptyBracketsCalculatorException();
                     }
-
                     if (!stackOfOperators.contains("(")) {
                         throw new InvalidSeparatorOrMismatchBracketsCalculatorException();
                     }
-
                     while (sizeOfStackOfOperators() > 0 && !isOpeningBrace(stackOfOperators.peek())) {
                         addNumberToConvertedExpression(stackOfOperators.pop());
                     }
+                    removeOpeningBracket();
 
-                    String closingBracket = stackOfOperators.removeFirst();
-
-                } else if (getOperationPriority(unit) <= getOperationPriority(stackOfOperators.peek())) {
-
-                    while (sizeOfStackOfOperators() > 0 && executedOperations.get(unit) <= executedOperations.get(stackOfOperators.peek())) {
+                } else if (getOperatorPriority(part) <= getOperatorPriority(stackOfOperators.peek())) {
+                    while (sizeOfStackOfOperators() > 0 && getOperatorPriority(part) <= getOperatorPriority(stackOfOperators.peek())) {
                         addNumberToConvertedExpression(stackOfOperators.pop());
                     }
-                    stackOfOperators.push(unit);
+                    stackOfOperators.push(part);
 
                 } else {
-                    stackOfOperators.push(unit);
+                    stackOfOperators.push(part);
                 }
 
             } else {
-                stackOfOperators.push(unit);
+                stackOfOperators.push(part);
             }
         }
 
         while (sizeOfStackOfOperators() > 0) {
-
             if (stackOfOperators.contains("(")) {
                 throw new MismatchBracketsCalculatorException();
             }
-
             addNumberToConvertedExpression(stackOfOperators.pop());
         }
 
         return convertedExpression;
     }
 
-    private boolean isOpeningBrace(String unit) {
-        return "(".equals(unit);
+    private boolean isClosingBrace(String part) {
+        return ")".equals(part);
+    }
+
+    private void removeOpeningBracket() {
+        String openingBracket = stackOfOperators.removeFirst();
+    }
+
+    private boolean isOpeningBrace(String part) {
+        return "(".equals(part);
     }
 
     private int sizeOfStackOfOperators() {
         return stackOfOperators.size();
     }
 
-    private void addNumberToConvertedExpression(String number) {
-        convertedExpression.add(number);
+    private void addNumberToConvertedExpression(String part) {
+        convertedExpression.add(part);
     }
 
-    private boolean isOperator(String item) {
-        return executedOperations.keySet().contains(item);
+    private boolean isOperator(String part) {
+        return executedOperations.keySet().contains(part);
     }
 
-    private Integer getOperationPriority(String operation) {
-        return executedOperations.get(operation);
+    private Integer getOperatorPriority(String operator) {
+        return executedOperations.get(operator);
     }
 
-    double compute(List<String> postfixNotation) {
-        Deque<Double> evaluationStack = new ArrayDeque<>();
-        for (String element : postfixNotation) {
-            if (!isOperator(element)) {
-                evaluationStack.push(Double.valueOf(element));
+    double compute(List<String> postfixNotation) throws CalculatorException {
+        for (String item : postfixNotation) {
+            if (!isOperator(item)) {
+                addNumberToStack(item);
             } else {
-                double operandFirst;
-                double operandSecond;
-                switch (element) {
-                    case "+":
-                        operandSecond = evaluationStack.pop();
-                        operandFirst = evaluationStack.pop();
-                        evaluationStack.push(operandFirst + operandSecond);
-                        break;
-                    case "-":
-                        operandSecond = evaluationStack.pop();
-                        operandFirst = evaluationStack.pop();
-                        evaluationStack.push(operandFirst - operandSecond);
-                        break;
-                    case "*":
-                        operandSecond = evaluationStack.pop();
-                        operandFirst = evaluationStack.pop();
-                        evaluationStack.push(operandFirst * operandSecond);
-                        break;
-                    case "/":
-                        operandSecond = evaluationStack.pop();
-                        operandFirst = evaluationStack.pop();
-                        evaluationStack.push(operandFirst / operandSecond);
-                        break;
-                }
+                executeOperation(item);
             }
         }
-        return evaluationStack.pop();
+        return computingStack.pop();
     }
 
-    public static void main(String[] args) throws CalculatorException {
-        double result = new StandardCalculator().evaluateExpression("101 * ( 45 + 78 ) / 2");
-        System.out.println(result);
+    private void addNumberToStack(String number) {
+        computingStack.push(Double.valueOf(number));
     }
+
+    protected void executeOperation(String operator) {
+        double secondOperand = computingStack.pop();
+        double firstOperand = computingStack.pop();
+        switch (operator) {
+            case "+":
+                doAddition(firstOperand, secondOperand);
+                break;
+            case "-":
+                doSubtraction(firstOperand, secondOperand);
+                break;
+            case "*":
+                doMultiplying(firstOperand, secondOperand);
+                break;
+            case "/":
+                doDivision(firstOperand, secondOperand);
+                break;
+        }
+    }
+
+    private void doDivision(double firstOperand, double secondOperand) {
+        computingStack.push(firstOperand / secondOperand);
+    }
+
+    private void doMultiplying(double firstOperand, double secondOperand) {
+        computingStack.push(firstOperand * secondOperand);
+    }
+
+    private void doSubtraction(double firstOperand, double secondOperand) {
+        computingStack.push(firstOperand - secondOperand);
+    }
+
+    private void doAddition(double firstOperand, double secondOperand) {
+        computingStack.push(firstOperand + secondOperand);
+    }
+
 }
