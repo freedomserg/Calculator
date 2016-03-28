@@ -6,9 +6,9 @@ import java.util.*;
 
 public class StandardCalculator {
     protected Map<String, Integer> executedOperations = new HashMap<>();
-    Deque<String> stackOfOperators = new ArrayDeque<>();
-    Deque<Double> computingStack = new ArrayDeque<>();
-    List<String> convertedExpression = new ArrayList<>();
+    protected Deque<String> stackOfOperators = new ArrayDeque<>();
+    protected Deque<Double> computingStack = new ArrayDeque<>();
+    protected List<String> convertedExpression = new ArrayList<>();
 
     public StandardCalculator() {
         executedOperations.put("(", 0);
@@ -19,11 +19,15 @@ public class StandardCalculator {
         executedOperations.put("/", 2);
     }
 
-    public double evaluateExpression(String validatedString) throws CalculatorException {
+    public Map<String, Integer> getExecutedOperations() {
+        return executedOperations;
+    }
+
+    public double evaluateExpression(String validatedString) {
         return compute(convertToPostfixNotation(validatedString));
     }
 
-    List<String> convertToPostfixNotation(String validatedString) throws CalculatorException {
+    List<String> convertToPostfixNotation(String validatedString) {
         String[] partsOfInfixNotation = validatedString.split(" ");
 
         for (String part : partsOfInfixNotation) {
@@ -104,7 +108,7 @@ public class StandardCalculator {
     double compute(List<String> postfixNotation) throws CalculatorException {
         for (String item : postfixNotation) {
             if (!isOperator(item)) {
-                addNumberToStack(item);
+                addNumberToComputingStack(item);
             } else {
                 executeOperation(item);
             }
@@ -112,43 +116,62 @@ public class StandardCalculator {
         return computingStack.pop();
     }
 
-    private void addNumberToStack(String number) {
-        computingStack.push(Double.valueOf(number));
+    private void addNumberToComputingStack(String number) {
+        try {
+            computingStack.push(Double.valueOf(number));
+        } catch (NumberFormatException ex) {
+            throw new UnsupportedOperationCalculatorException();
+        }
     }
 
     protected void executeOperation(String operator) {
-        double secondOperand = computingStack.pop();
-        double firstOperand = computingStack.pop();
+        Arguments arguments = getArguments(operator);
         switch (operator) {
             case "+":
-                doAddition(firstOperand, secondOperand);
+                doAddition(arguments);
                 break;
             case "-":
-                doSubtraction(firstOperand, secondOperand);
+                doSubtraction(arguments);
                 break;
             case "*":
-                doMultiplying(firstOperand, secondOperand);
+                doMultiplying(arguments);
                 break;
             case "/":
-                doDivision(firstOperand, secondOperand);
+                doDivision(arguments);
                 break;
         }
     }
 
-    private void doDivision(double firstOperand, double secondOperand) {
-        computingStack.push(firstOperand / secondOperand);
+    protected Arguments getArguments(String operator) {
+        Arguments arguments = new Arguments();
+        switch (operator) {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+                arguments.secondArgument = computingStack.pop();
+                arguments.firstArgument = computingStack.pop();
+                break;
+        }
+        return arguments;
     }
 
-    private void doMultiplying(double firstOperand, double secondOperand) {
-        computingStack.push(firstOperand * secondOperand);
+    private void doAddition(Arguments arguments) {
+        computingStack.push(arguments.firstArgument + arguments.secondArgument);
     }
 
-    private void doSubtraction(double firstOperand, double secondOperand) {
-        computingStack.push(firstOperand - secondOperand);
+    private void doSubtraction(Arguments arguments) {
+        computingStack.push(arguments.firstArgument - arguments.secondArgument);
     }
 
-    private void doAddition(double firstOperand, double secondOperand) {
-        computingStack.push(firstOperand + secondOperand);
+    private void doMultiplying(Arguments arguments) {
+        computingStack.push(arguments.firstArgument * arguments.secondArgument);
     }
 
+    private void doDivision(Arguments arguments) throws DividingByZeroCalculatorException {
+        if (arguments.secondArgument == 0) {
+            throw new DividingByZeroCalculatorException();
+        }
+        computingStack.push(arguments.firstArgument / arguments.secondArgument);
+    }
 }

@@ -1,4 +1,4 @@
 package net.syrotskyi.projects.calculator.exceptions;
 
-public class CalculatorException extends Exception {
+public class CalculatorException extends RuntimeException {
 }
