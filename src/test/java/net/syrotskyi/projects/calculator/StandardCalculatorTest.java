@@ -18,11 +18,11 @@ public class StandardCalculatorTest {
 
     @Test
     public void checkConvertingToPostfixNotationWithOneOperationTwoOperands() {
-        infixNotation = "1 + 2";
+        infixNotation = "1 + 02";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
         List<String> expected = new ArrayList<>();
         expected.add("1");
-        expected.add("2");
+        expected.add("02");
         expected.add("+");
         Assert.assertEquals(expected, actual);
     }
@@ -84,13 +84,13 @@ public class StandardCalculatorTest {
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
     }
 
-    @Test (expected = InvalidSeparatorOrMismatchBracketsCalculatorException.class)
+    @Test (expected = MismatchBracketsCalculatorException.class)
     public void checkConvertingToPostfixNotationWithInvalidSeparator() {
         infixNotation = "1.5 - 3 / (2 - 4.6 ) * 2.1";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
     }
 
-    @Test (expected = InvalidSeparatorOrMismatchBracketsCalculatorException.class)
+    @Test (expected = MismatchBracketsCalculatorException.class)
     public void checkConvertingToPostfixNotationWithRedundantClosingBracket() {
         infixNotation = "101.23 * ( 45.26 + 78.169 ) ) / 19.5";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
@@ -136,7 +136,7 @@ public class StandardCalculatorTest {
 
     @Test
     public void checkAdditionWithDoubleNumbers() {
-        String input = "11 22.0 + 444.5 + 33.75 +";
+        String input = "11 22.0 + 0444.5 + 33.75 +";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
         double actual = new StandardCalculator().compute(postfixNotation);
@@ -164,7 +164,7 @@ public class StandardCalculatorTest {
 
     @Test
     public void checkMultiplicationWithDoubleNumbers() {
-        String input = "5.5 2.0 * 4.55 * 1.5 *";
+        String input = "05.5 2.0 * 4.55 * 01.5 *";
         postfixNotation = new ArrayList<>();
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
         double result = new StandardCalculator().compute(postfixNotation);

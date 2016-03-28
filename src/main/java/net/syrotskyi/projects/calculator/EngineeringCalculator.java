@@ -5,11 +5,11 @@ import net.syrotskyi.projects.calculator.exceptions.ZeroRootCalculatorException;
 public class EngineeringCalculator extends StandardCalculator {
     public EngineeringCalculator() {
         super();
-        executedOperations.put("^", 3);
-        executedOperations.put("root", 3);
-        executedOperations.put("sin", 4);
-        executedOperations.put("cos", 4);
-        executedOperations.put("tan", 4);
+        executedOperationsOrderedByPriority.put("^", 3);
+        executedOperationsOrderedByPriority.put("root", 3);
+        executedOperationsOrderedByPriority.put("sin", 4);
+        executedOperationsOrderedByPriority.put("cos", 4);
+        executedOperationsOrderedByPriority.put("tan", 4);
     }
 
     @Override

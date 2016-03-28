@@ -5,22 +5,26 @@ import net.syrotskyi.projects.calculator.exceptions.*;
 import java.util.*;
 
 public class StandardCalculator {
-    protected Map<String, Integer> executedOperations = new HashMap<>();
-    protected Deque<String> stackOfOperators = new ArrayDeque<>();
-    protected Deque<Double> computingStack = new ArrayDeque<>();
-    protected List<String> convertedExpression = new ArrayList<>();
+    protected Map<String, Integer> executedOperationsOrderedByPriority;
+    protected Deque<String> stackOfOperators;
+    protected Deque<Double> computingStack;
+    protected List<String> convertedExpression;
 
     public StandardCalculator() {
-        executedOperations.put("(", 0);
-        executedOperations.put(")", 0);
-        executedOperations.put("+", 1);
-        executedOperations.put("-", 1);
-        executedOperations.put("*", 2);
-        executedOperations.put("/", 2);
+        executedOperationsOrderedByPriority = new HashMap<>();
+        executedOperationsOrderedByPriority.put("(", 0);
+        executedOperationsOrderedByPriority.put(")", 0);
+        executedOperationsOrderedByPriority.put("+", 1);
+        executedOperationsOrderedByPriority.put("-", 1);
+        executedOperationsOrderedByPriority.put("*", 2);
+        executedOperationsOrderedByPriority.put("/", 2);
+        stackOfOperators = new ArrayDeque<>();
+        computingStack = new ArrayDeque<>();
+        convertedExpression = new ArrayList<>();
     }
 
     public Map<String, Integer> getExecutedOperations() {
-        return executedOperations;
+        return executedOperationsOrderedByPriority;
     }
 
     public double evaluateExpression(String validatedString) {
@@ -45,7 +49,7 @@ public class StandardCalculator {
                         throw new EmptyBracketsCalculatorException();
                     }
                     if (!stackOfOperators.contains("(")) {
-                        throw new InvalidSeparatorOrMismatchBracketsCalculatorException();
+                        throw new MismatchBracketsCalculatorException();
                     }
                     while (sizeOfStackOfOperators() > 0 && !isOpeningBrace(stackOfOperators.peek())) {
                         addNumberToConvertedExpression(stackOfOperators.pop());
@@ -82,7 +86,7 @@ public class StandardCalculator {
     }
 
     private void removeOpeningBracket() {
-        String openingBracket = stackOfOperators.removeFirst();
+        stackOfOperators.removeFirst();
     }
 
     private boolean isOpeningBrace(String part) {
@@ -98,19 +102,19 @@ public class StandardCalculator {
     }
 
     private boolean isOperator(String part) {
-        return executedOperations.keySet().contains(part);
+        return executedOperationsOrderedByPriority.keySet().contains(part);
     }
 
     private Integer getOperatorPriority(String operator) {
-        return executedOperations.get(operator);
+        return executedOperationsOrderedByPriority.get(operator);
     }
 
-    double compute(List<String> postfixNotation) throws CalculatorException {
-        for (String item : postfixNotation) {
-            if (!isOperator(item)) {
-                addNumberToComputingStack(item);
+    double compute(List<String> postfixNotation) {
+        for (String part : postfixNotation) {
+            if (!isOperator(part)) {
+                addNumberToComputingStack(part);
             } else {
-                executeOperation(item);
+                executeOperation(part);
             }
         }
         return computingStack.pop();
