@@ -20,10 +20,7 @@ public class StandardCalculatorTest {
     public void checkConvertingToPostfixNotationWithOneOperationTwoOperands() {
         infixNotation = "1 + 02";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("1");
-        expected.add("02");
-        expected.add("+");
+        List<String> expected = Arrays.asList("1", "02", "+");
         Assert.assertEquals(expected, actual);
     }
 
@@ -31,14 +28,7 @@ public class StandardCalculatorTest {
     public void checkConvertingToPostfixNotationWithThreeOperationsFourOperands() {
         infixNotation = "1 + 2 - 8 * 2";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("1");
-        expected.add("2");
-        expected.add("+");
-        expected.add("8");
-        expected.add("2");
-        expected.add("*");
-        expected.add("-");
+        List<String> expected = Arrays.asList("1", "2", "+", "8", "2", "*", "-");
         Assert.assertEquals(expected, actual);
     }
 
@@ -46,20 +36,7 @@ public class StandardCalculatorTest {
     public void checkConvertingToPostfixNotationWithSixOperationsSevenOperands() {
         infixNotation = "3 * 2.5 - 5 / 3.75 + 4 / 1.25 * 2.2";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("3");
-        expected.add("2.5");
-        expected.add("*");
-        expected.add("5");
-        expected.add("3.75");
-        expected.add("/");
-        expected.add("-");
-        expected.add("4");
-        expected.add("1.25");
-        expected.add("/");
-        expected.add("2.2");
-        expected.add("*");
-        expected.add("+");
+        List<String> expected = Arrays.asList("3", "2.5", "*", "5", "3.75", "/", "-", "4", "1.25", "/", "2.2", "*", "+");
         Assert.assertEquals(expected, actual);
     }
 
@@ -67,14 +44,7 @@ public class StandardCalculatorTest {
     public void checkConvertingToPostfixNotationWithThreeOperationsFourOperandsWithBrackets() {
         infixNotation = "1 + ( 2 - 8 ) * 2";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("1");
-        expected.add("2");
-        expected.add("8");
-        expected.add("-");
-        expected.add("2");
-        expected.add("*");
-        expected.add("+");
+        List<String> expected = Arrays.asList("1", "2", "8", "-", "2", "*", "+");
         Assert.assertEquals(expected, actual);
     }
 
@@ -106,22 +76,8 @@ public class StandardCalculatorTest {
     public void checkConvertingToPostfixNotationWithSevenOperationsEightOperandsWithBrackets() {
         infixNotation = "2.5 * ( ( 33.75 - 11.25 ) * 5.2 / ( 1.25 + 3.9 ) ) / ( 1.5 + 3 )";
         List<String> actual = new StandardCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("2.5");
-        expected.add("33.75");
-        expected.add("11.25");
-        expected.add("-");
-        expected.add("5.2");
-        expected.add("*");
-        expected.add("1.25");
-        expected.add("3.9");
-        expected.add("+");
-        expected.add("/");
-        expected.add("*");
-        expected.add("1.5");
-        expected.add("3");
-        expected.add("+");
-        expected.add("/");
+        List<String> expected = Arrays.asList("2.5", "33.75", "11.25", "-", "5.2", "*", "1.25", "3.9", "+", "/", "*",
+                "1.5", "3", "+", "/");
         Assert.assertEquals(expected, actual);
     }
 
@@ -142,7 +98,6 @@ public class StandardCalculatorTest {
         double actual = new StandardCalculator().compute(postfixNotation);
         Assert.assertThat(actual, is(511.25));
     }
-
 
     @Test
     public void checkSubtractingWithIntegerDigits() {
@@ -197,5 +152,4 @@ public class StandardCalculatorTest {
         postfixNotation.addAll(Arrays.asList(input.split(" ")));
         double result = new StandardCalculator().compute(postfixNotation);
     }
-
 }

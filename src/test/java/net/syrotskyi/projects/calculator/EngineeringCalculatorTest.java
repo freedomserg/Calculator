@@ -21,10 +21,7 @@ public class EngineeringCalculatorTest {
     public void checkConvertingToPostfixNotationWithRaisingToPower() {
         infixNotation = "5 ^ 2";
         List<String> actual = new EngineeringCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("5");
-        expected.add("2");
-        expected.add("^");
+        List<String> expected = Arrays.asList("5", "2", "^");
         Assert.assertEquals(expected, actual);
     }
 
@@ -32,14 +29,7 @@ public class EngineeringCalculatorTest {
     public void checkConvertingToPostfixNotationWithRaisingToPowerWithBrackets() {
         infixNotation = "3 + ( 2 - 8 ) ^ 2";
         List<String> actual = new EngineeringCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("3");
-        expected.add("2");
-        expected.add("8");
-        expected.add("-");
-        expected.add("2");
-        expected.add("^");
-        expected.add("+");
+        List<String> expected = Arrays.asList("3", "2", "8", "-", "2", "^", "+");
         Assert.assertEquals(expected, actual);
     }
 
@@ -47,18 +37,7 @@ public class EngineeringCalculatorTest {
     public void checkConvertingToPostfixNotationWithRaisingToPowerAndRootWithBrackets() {
         infixNotation = "125.98 * 5 root 2.3 / ( 16.25 - 8 ) ^ 2.3";
         List<String> actual = new EngineeringCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("125.98");
-        expected.add("5");
-        expected.add("2.3");
-        expected.add("root");
-        expected.add("*");
-        expected.add("16.25");
-        expected.add("8");
-        expected.add("-");
-        expected.add("2.3");
-        expected.add("^");
-        expected.add("/");
+        List<String> expected = Arrays.asList("125.98", "5", "2.3", "root", "*", "16.25", "8", "-", "2.3", "^", "/");
         Assert.assertEquals(expected, actual);
     }
 
@@ -66,17 +45,7 @@ public class EngineeringCalculatorTest {
     public void checkConvertingToPostfixNotationWithTrigonometricExpressions() {
         infixNotation = "sin 45 + ( cos 90 - tan 120 ) ^ 2";
         List<String> actual = new EngineeringCalculator().convertToPostfixNotation(infixNotation);
-        List<String> expected = new ArrayList<>();
-        expected.add("45");
-        expected.add("sin");
-        expected.add("90");
-        expected.add("cos");
-        expected.add("120");
-        expected.add("tan");
-        expected.add("-");
-        expected.add("2");
-        expected.add("^");
-        expected.add("+");
+        List<String> expected = Arrays.asList("45", "sin", "90", "cos", "120", "tan", "-", "2", "^", "+");
         Assert.assertEquals(expected, actual);
     }
 
