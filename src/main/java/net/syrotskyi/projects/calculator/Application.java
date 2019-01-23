@@ -42,5 +42,6 @@ public class Application {
         validator.validateInputExpression(expression, standardCalculator.getExecutedOperations());
         result = standardCalculator.evaluateExpression(expression);
         printToConsole("Result: " + String.format("%,.2f", result));
+        printToConsole("Result: " + String.format("%,.2f", result));
     }
 }
